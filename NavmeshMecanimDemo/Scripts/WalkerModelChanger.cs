@@ -7,17 +7,20 @@ public class WalkerModelChanger : MonoBehaviour {
 	public int num;
 	private int currentCharacter = -1;
 
-	public Animator[] characters;
+	public WalkerFactory factory;
 
 	public RuntimeAnimatorController controller;
 
 	// Use this for initialization
 	void Start () {
-//		ChangeCharacter (num);
 	}
 	
 	// Update is called once per frame
-	void Update () {
+//	void Update () {
+//		ChangeCharacter (num);
+//	}
+
+	public void UpdateCharacter(){
 		ChangeCharacter (num);
 	}
 
@@ -26,34 +29,41 @@ public class WalkerModelChanger : MonoBehaviour {
 		if (currentCharacter == n)
 			return;
 
-		if (n > characters.Length - 1) {
+		if (factory == null || !factory.HasAWalker(n)) {
 			return;
 		}
 		
 		currentCharacter = n;
 
 		Animator current = GetComponentInChildren<Animator> ();
-//		print (current);
+		Debug.Log (current);
+
+		Transform parent = transform;
+		Quaternion orgRot = transform.localRotation;
+
 		if (current != null) {
-			Transform parent = current.transform.parent;
-			Quaternion orgRot = current.transform.localRotation;
-			Destroy (current.gameObject);
-//			print("Destory:"+current.gameObject);
-
-			Animator nAnim = Instantiate<Animator> (characters [n]);
-			nAnim.runtimeAnimatorController = controller;
-			nAnim.transform.SetParent (parent);
-			nAnim.transform.localPosition = Vector3.zero;
-			nAnim.transform.localRotation = orgRot;
-
-			AnimatorDelegate ad = nAnim.gameObject.AddComponent<AnimatorDelegate> ();
-			ad.target = gameObject;
-
-			MonoBehaviour[] monos = gameObject.GetComponents<MonoBehaviour> ();
-			foreach (MonoBehaviour mono in monos) {
-				mono.SendMessage ("OnModelChanged",nAnim, SendMessageOptions.DontRequireReceiver);
-			}
-
+			parent = current.transform.parent;
+			orgRot = current.transform.localRotation;
+			DestroyImmediate (current.gameObject);
 		}
+
+		AAgent agent2 = factory.GetAWalker (n);
+		Animator nAnim = agent2.GetComponentInChildren<Animator> ();
+
+		nAnim.runtimeAnimatorController = controller;
+		nAnim.transform.SetParent (parent);
+		nAnim.transform.localPosition = Vector3.zero;
+		nAnim.transform.localRotation = orgRot;
+
+		DestroyImmediate (agent2.gameObject);
+
+		AnimatorDelegate ad = nAnim.gameObject.AddComponent<AnimatorDelegate> ();
+		ad.target = gameObject;
+
+		MonoBehaviour[] monos = gameObject.GetComponents<MonoBehaviour> ();
+		foreach (MonoBehaviour mono in monos) {
+			mono.SendMessage ("OnModelChanged",nAnim, SendMessageOptions.DontRequireReceiver);
+		}
+
 	}
 }
