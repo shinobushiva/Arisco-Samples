@@ -9,7 +9,8 @@ public class CarWorldDisplay : WorldBehavior
 	{
 		base.Initialize ();
 
-		AriscoChart.Instance.AddChart("speed", "Total Speed", AriscoChart.ChartType.Line, 100, 100);
+		if(AriscoChart.Instance)
+			AriscoChart.Instance.AddChart("speed", "Total Speed", AriscoChart.ChartType.Line, 100, 100);
 
 
 		speedSumList = new List<float> ();

@@ -47,7 +47,7 @@ public class WalkerCreationWorldBehavior : WorldBehavior
 
 	public override void Initialize ()
 	{
-		print ("PedestrianCreationWorldBehavior#Initialize");
+		print ("WalkerCreationWorldBehavior#Initialize");
 
 
 		sps = FindObjectsOfType<SpawningPoint> ();

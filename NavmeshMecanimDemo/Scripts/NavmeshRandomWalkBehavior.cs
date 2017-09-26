@@ -37,7 +37,7 @@ public class NavmeshRandomWalkBehavior : AAnimatorBehavior
 	void Initialize ()
 	{
 		agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
-		agent.updateRotation = false;
+		agent.updateRotation = true;
 		agent.updatePosition = true;
 		
 		
@@ -51,6 +51,7 @@ public class NavmeshRandomWalkBehavior : AAnimatorBehavior
 		target = transform;
 	}
 
+	public Vector3 lastVelocity;
 	protected void SetupAgentLocomotion ()
 	{
 		
@@ -62,10 +63,11 @@ public class NavmeshRandomWalkBehavior : AAnimatorBehavior
 			SetDestination (target.position);
 
 		} else {
+
+			Vector3 vel = agent.desiredVelocity;
 			
-			float speed = agent.desiredVelocity.magnitude;
-			
-			Vector3 velocity = Quaternion.Inverse (transform.rotation) * agent.desiredVelocity;
+			float speed = vel.magnitude;
+			Vector3 velocity = Quaternion.Inverse (transform.rotation) * vel;
 			float angle = Mathf.Atan2 (velocity.x, velocity.z) * 180.0f / Mathf.PI;
 
 			AvatarLocomotion.Do (speed, angle);
@@ -75,7 +77,6 @@ public class NavmeshRandomWalkBehavior : AAnimatorBehavior
 
 	void OnAnimatorMove ()
 	{
-//		print ("OnAnimatorMove()");
 		if (!AttachedAgent.Began) {
 			if(agent != null)
 				agent.velocity = Vector3.zero;

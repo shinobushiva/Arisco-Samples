@@ -77,8 +77,10 @@ public class SchelingWorldBehavior : WorldBehavior
 			}
 		}
 
-		AriscoChart.Instance.AddChart ("satisfied", "Satisfied Rate", AriscoChart.ChartType.Line, 100, 50);
-		AriscoChart.Instance.AddChart ("satisfied_pie", "Satisfied Rate", AriscoChart.ChartType.Pie, 100, 50);
+		if (AriscoChart.Instance) {
+			AriscoChart.Instance.AddChart ("satisfied", "Satisfied Rate", AriscoChart.ChartType.Line, 100, 50);
+			AriscoChart.Instance.AddChart ("satisfied_pie", "Satisfied Rate", AriscoChart.ChartType.Pie, 100, 50);
+		}
 	}
 
 	void Begin ()
@@ -168,9 +170,11 @@ public class SchelingWorldBehavior : WorldBehavior
 			float f = satisfiedRates [i];
 			values.Add (new List<object> (){i, f});
 		}
-		AriscoChart.Instance.SetDataString ("satisfied",
-			AriscoChart.Instance.ToDataString (titles, values)
-		);
+		if (AriscoChart.Instance) {
+			AriscoChart.Instance.SetDataString ("satisfied",
+				AriscoChart.Instance.ToDataString (titles, values)
+			);
+		}
 		
 		titles = new List<object> (){
 			"Satfied?", "Number"
@@ -178,10 +182,12 @@ public class SchelingWorldBehavior : WorldBehavior
 		values = new List<List<object>> ();
 		values.Add (new List<object> (){"Satisfied", satisfied});
 		values.Add (new List<object> (){"Unsatisfied", all.Count-emptyAgents.Length -satisfied});
-		
-		AriscoChart.Instance.SetDataString ("satisfied_pie",
-			AriscoChart.Instance.ToDataString (titles, values)
-		);
+
+		if (AriscoChart.Instance) {
+			AriscoChart.Instance.SetDataString ("satisfied_pie",
+				AriscoChart.Instance.ToDataString (titles, values)
+			);
+		}
 	}
 
 	void End ()

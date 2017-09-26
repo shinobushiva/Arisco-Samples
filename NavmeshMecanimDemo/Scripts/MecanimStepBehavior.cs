@@ -5,17 +5,18 @@ using System.Collections.Generic;
 [RequireComponent(typeof(AAgent))]
 public class MecanimStepBehavior : AAnimatorBehavior
 {
-	protected UnityEngine.AI.NavMeshAgent agent;
+	private UnityEngine.AI.NavMeshAgent agent;
+	private int recording = -1;
 
 	void Initialize ()
 	{
 		recording = -1;
+		agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
 	}
-
-	int recording = -1;
 
 	void Update ()
 	{
+
 		if (AttachedAgent.World && !AttachedAgent.World.timeTicking) {
 			if(recording < 0)
 				return;
@@ -27,6 +28,12 @@ public class MecanimStepBehavior : AAnimatorBehavior
 				Avatar.StopRecording ();
 				Avatar.StartPlayback ();
 				Avatar.speed = 0;
+
+				if (agent) {
+					agent.updateRotation = false;
+					agent.updatePosition = false;
+				}
+
 				recording = -1;
 			}
 		}
@@ -36,6 +43,12 @@ public class MecanimStepBehavior : AAnimatorBehavior
 	{
 		if (recording == -1) {
 			Avatar.StopPlayback ();
+
+			if (agent) {
+				agent.updateRotation = true;
+				agent.updatePosition = true;
+			}
+
 			Avatar.StartRecording (1);
 			Avatar.speed = 1;
 			recording = 0;
